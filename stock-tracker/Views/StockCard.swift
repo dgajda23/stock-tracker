@@ -9,6 +9,7 @@ import SwiftUI
 
 struct StockCard: View {
     let stockModel: StockModel
+    var onRemove: () -> Void
     var body: some View {
         // Stock cards
         VStack {
@@ -17,17 +18,21 @@ struct StockCard: View {
                     .font(.title)
                 
                 VStack {
-                    Text("AAPL")
+                    Text(stockModel.symbol)
                         .bold()
                         .font(.title3)
                 }
                 
                 Spacer()
                 
-                Text("2.3%")
-                    .foregroundColor(.green)
-                    .bold()
-                    .font(.title3)
+                Text(
+                    (((stockModel.percentageChange ?? 0.0) >= 0.0) ? "+" : "")
+                    +
+                    "\(String(format: "%.2f" ,stockModel.percentageChange ?? 0.0))%"
+                )
+                .foregroundColor((stockModel.percentageChange ?? 0.0) >= 0.0 ? Color.green : Color.red)
+                .bold()
+                .font(.title3)
             }
             
             Spacer()
@@ -41,6 +46,22 @@ struct StockCard: View {
                 Text("Graph Here")
                 
             }
+            
+            HStack {
+                Spacer()
+                Button(action: {
+                    onRemove() // Call the removal action
+                }) {
+                    Text("REMOVE")
+                        .foregroundColor(Color.white)
+                        .bold()
+                        .padding()
+                        .background(
+                            RoundedRectangle(cornerRadius: 20)
+                                .fill(Color.red)
+                        )
+                }
+            }
         }
         .padding(.horizontal)
         .padding(.vertical)
@@ -48,7 +69,7 @@ struct StockCard: View {
         .frame(width: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 40)
-                .stroke(Color.black)
+                .stroke(Color.gray)
         )
     }
 }

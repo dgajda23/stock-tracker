@@ -17,7 +17,7 @@ struct ContentView: View {
             HeaderView(isShowingSearchSheet: $isShowingStockSearchSheet)
                 .padding()
             
-            PortfolioTotalCard()
+            PortfolioTotalCard(stocksVM: stockVM)
             
             StockListView(stockVM: stockVM)
             
@@ -26,7 +26,7 @@ struct ContentView: View {
         .padding()
         .edgesIgnoringSafeArea(.bottom)
         .sheet(isPresented: $isShowingStockSearchSheet) {
-            SearchStockView()
+            SearchStockView(stocksVM: stockVM)
         }
     }
 }

@@ -30,10 +30,34 @@ class APIRequest{
                 }
                 let returnedQuote = try? JSONDecoder().decode(Quote.self, from: quoteData)
                 
-//                print(returnedQuote)
                 handler(returnedQuote)
             }
             task.resume()
         }
     }
+    
+    public func getSymbolLookup(searchQuery: String, handler: @escaping(_ returnedLookup: StockSymbolSearch?) -> ()) {
+            let query: String = "search?q=\(searchQuery)"
+            
+            let url = URL(string: url + query + apiToken)
+            
+            if let url = url {
+                let task = URLSession.shared.dataTask(with: url) { data, response, error in
+                    if let error = error {
+                        print("error searching for symbols: \(error)")
+                        return
+                    } else {
+                        guard let searchData = data else {
+                            print("symbol search not valid")
+                            return
+                        }
+                        
+                        let returnedSymbols = try? JSONDecoder().decode(StockSymbolSearch.self, from: searchData)
+                        handler(returnedSymbols)
+                    }
+                }
+                task.resume()
+            }
+        }
+        
 }

@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct PortfolioTotalCard: View {
+    
+    @StateObject var stocksVM: StockViewModel
     var body: some View {
         VStack (alignment: .leading){
             Text("Portfolio Value")
@@ -16,52 +18,22 @@ struct PortfolioTotalCard: View {
                 .font(.title2)
             
             HStack (alignment: .top){
-                Text("1,789.27")
+                Text("\(String(format: "%.2f", stocksVM.stocks.map({$0.currentPrice ?? 0.0}).reduce(0.0, +)))")
                     .foregroundColor(Color.white)
                     .bold()
                     .font(.system(size: 55))
-                Text("4.6%")
-                    .foregroundColor(Color.green)
+                let averagePercentageChange = stocksVM.stocks
+                    .compactMap { $0.percentageChange }
+                    .reduce(0.0, +) / Double(stocksVM.stocks.count)
+                
+                Text("\(String(format: "%.2f", averagePercentageChange))%")
+                    .foregroundColor(averagePercentageChange >= 0 ? Color.green : Color.red)
                     .bold()
                     .font(.title3)
             }
             
             Spacer()
             Spacer()
-            
-            HStack {
-                Button(action: {
-                    print("Add stocks")
-                }){
-                    Text("ADD")
-                        .foregroundColor(Color.white)
-                        .bold()
-                        .padding()
-                        .padding(.horizontal)
-                        .background(
-                            RoundedRectangle(cornerRadius: 30)
-                                .fill(Color.green)
-                        )
-                }
-                .padding(.bottom)
-                .padding(.horizontal)
-                
-                Button(action: {
-                    print("Remove stocks")
-                }){
-                    Text("REMOVE")
-                        .foregroundColor(Color.white)
-                        .bold()
-                        .padding()
-                        .padding(.horizontal)
-                        .background(
-                            RoundedRectangle(cornerRadius: 30)
-                                .fill(Color.red)
-                        )
-                }
-                .padding(.bottom)
-                .padding(.horizontal)
-            }
         }
         .frame(height: UIScreen.main.bounds.height / 4)
         .frame(maxWidth: .infinity)
@@ -73,6 +45,6 @@ struct PortfolioTotalCard: View {
     }
 }
 
-#Preview {
-    PortfolioTotalCard()
-}
+//#Preview {
+//    PortfolioTotalCard()
+//}

@@ -26,3 +26,15 @@ struct Quote: Decodable {
     // Time
     let t: Double
 }
+
+struct StockSymbolSearch: Decodable {
+    let count: Int
+    let result: [StockSymbol]
+}
+
+struct StockSymbol: Decodable, Hashable {
+    let description: String
+    let displaySymbol: String
+    let symbol: String
+    let type: String
+}

@@ -24,5 +24,9 @@ class StockViewModel: ObservableObject {
             }
         }
     }
-    
+    public func removeStock(stock: StockModel) {
+        if let index = stocks.firstIndex(of: stock) {
+            stocks.remove(at: index)
+        }
+    }
 }

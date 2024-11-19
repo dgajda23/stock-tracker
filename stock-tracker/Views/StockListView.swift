@@ -23,13 +23,18 @@ struct StockListView: View {
             ScrollView{
                 VStack{
                     ForEach(stockVM.stocks, id: \.self) {stock in
-                        StockCard(stockModel: stock)
+                        StockCard(stockModel: stock){
+                            stockVM.removeStock(stock: stock)
+                        }
                     }
-//                    StockCard()
-//                    StockCard()
                 }
             }
             .padding()
+        }
+    }
+    private func removeStock(stock: StockModel) {
+        if let index = stockVM.stocks.firstIndex(of: stock) {
+            stockVM.stocks.remove(at: index)
         }
     }
 }
