@@ -10,7 +10,11 @@ import SwiftUI
 struct SearchStockView: View {
     @State private var searchSymbol : String = ""
     @State private var stockSymbols: [StockSymbol] = []
+    @State private var showSharePrompt = false
+    @State private var selectedStock: StockSymbol?
+    @State private var sharesInput: String = ""
     @StateObject var stocksVM: StockViewModel
+    
     var body: some View {
         VStack {
             TextField("Ticker Symbol", text: $searchSymbol)
@@ -36,7 +40,8 @@ struct SearchStockView: View {
                     .foregroundColor(.secondary)
                 
                 Button(action: {
-                    addStockToPortfolio(symbol: symbol)
+                    selectedStock = symbol
+                    showSharePrompt = true
                 }) {
                     Text("Add to Portfolio")
                         .font(.subheadline)
@@ -46,7 +51,14 @@ struct SearchStockView: View {
             .padding(.vertical, 5)
         }
         .padding()
-        Text("Search View")
+        .sheet(isPresented: $showSharePrompt) {
+            ShareInputView(sharesInput: $sharesInput, selectedStock: selectedStock) {
+                if let shares = Int(sharesInput), shares > 0, let selectedStock = selectedStock {
+                    addStockToPortfolio(symbol: selectedStock, shares: shares)
+                }
+                showSharePrompt = false
+            }
+        }
     }
     
     func fetchSymbols() {
@@ -58,14 +70,15 @@ struct SearchStockView: View {
             }
         }
     }
-    func addStockToPortfolio(symbol: StockSymbol) {
+    func addStockToPortfolio(symbol: StockSymbol, shares: Int) {
         // Fetch the current price and other data for the selected stock
         APIRequest.instance.getSymbolQuote(symbol: symbol.symbol) { returnedQuote in
             if let quote = returnedQuote {
                 let newStock = StockModel(
                     symbol: symbol.symbol,
                     currentPrice: quote.c,
-                    percentageChange: quote.dp
+                    percentageChange: quote.dp,
+                    sharesOwned: shares
                 )
                 DispatchQueue.main.async {
                     stocksVM.stocks.append(newStock)
@@ -73,9 +86,32 @@ struct SearchStockView: View {
             }
         }
     }
+    
+    struct ShareInputView: View {
+        @Binding var sharesInput: String
+        var selectedStock: StockSymbol?
+        var onAdd: () -> Void
+        
+        var body: some View {
+            VStack(spacing: 20) {
+                Text("Enter the number of shares to add: ")
+                    .font(.headline)
+                    .padding()
+                
+                TextField("Number of shares", text: $sharesInput)
+                    .keyboardType(.numberPad)
+                    .padding()
+                    .background(RoundedRectangle(cornerRadius: 10).stroke(Color.blue))
+                
+                Button("Add to Portfolio") {
+                    onAdd()
+                }
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
+            }
+            .padding()
+        }
+    }
 }
-
-
-//#Preview {
-//    SearchStockView()
-//}

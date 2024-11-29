@@ -16,7 +16,7 @@ struct HeaderView: View {
             Text("Stock Tracker")
                 .font(.largeTitle)
                 .bold()
-                .foregroundColor(Color.darkBlue)
+                .foregroundColor(Color.gold)
             
             Spacer()
             
@@ -24,14 +24,9 @@ struct HeaderView: View {
                 isShowingSearchSheet = true
             }) {
                 Image(systemName: "magnifyingglass")
-                    .accentColor(Color.darkBlue)
+                    .accentColor(Color.gold)
                     .font(.title)
             }
         }
     }
 }
-
-//#Preview {
-//    HeaderView()
-//        .padding()
-//}

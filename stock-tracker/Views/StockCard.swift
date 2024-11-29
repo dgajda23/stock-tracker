@@ -9,18 +9,22 @@ import SwiftUI
 
 struct StockCard: View {
     let stockModel: StockModel
+    
     var onRemove: () -> Void
     var body: some View {
         // Stock cards
         VStack {
             HStack {
-                Image(systemName: "apple.logo")
-                    .font(.title)
                 
                 VStack {
                     Text(stockModel.symbol)
                         .bold()
-                        .font(.title3)
+                        .font(.title)
+                    
+                    // Display number of stocks owned
+                    Text("Shares: \(stockModel.sharesOwned ?? 1)")
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
                 }
                 
                 Spacer()
@@ -30,27 +34,37 @@ struct StockCard: View {
                     +
                     "\(String(format: "%.2f" ,stockModel.percentageChange ?? 0.0))%"
                 )
-                .foregroundColor((stockModel.percentageChange ?? 0.0) >= 0.0 ? Color.green : Color.red)
+                .foregroundColor((stockModel.percentageChange ?? 0.0) >= 0.0 ? Color.emeraldGreen : Color.crimson)
                 .bold()
                 .font(.title3)
             }
             
             Spacer()
             HStack {
-                Text("\(stockModel.currentPrice ?? 0.0)")
-                    .bold()
-                    .font(.title)
+                // ZStack to overlay the rounded rectangle behind the text
+                ZStack {
+                    // RoundedRectangle as the background for the text
+                    RoundedRectangle(cornerRadius: 8)
+                        .fill((stockModel.percentageChange ?? 0.0) >= 0.0 ? Color.emeraldGreen : Color.crimson)
+                        .frame(height: 40)
+                        .frame(width: 200)
+                        .padding(.horizontal, 8)
+                    
+                    // Price Text
+                    Text("$\(String(format: "%.2f", stockModel.currentPrice ?? 0.0))")
+                        .bold()
+                        .font(.title)
+                        .foregroundColor(.graphiteGray)
+                }
+                .frame(maxWidth: .infinity, alignment: .center)
                 
                 Spacer()
-                
-                Text("Graph Here")
-                
             }
             
             HStack {
                 Spacer()
                 Button(action: {
-                    onRemove() // Call the removal action
+                    onRemove()
                 }) {
                     Text("REMOVE")
                         .foregroundColor(Color.white)
@@ -58,7 +72,7 @@ struct StockCard: View {
                         .padding()
                         .background(
                             RoundedRectangle(cornerRadius: 20)
-                                .fill(Color.red)
+                                .fill(Color.darkCrimson)
                         )
                 }
             }
@@ -69,11 +83,8 @@ struct StockCard: View {
         .frame(width: .infinity)
         .background(
             RoundedRectangle(cornerRadius: 40)
-                .stroke(Color.gray)
+                .fill(Color.obsidianGray)
+                .stroke(Color.obsidianGray)
         )
     }
 }
-
-//#Preview {
-//    StockCard()
-//}

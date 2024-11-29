@@ -18,15 +18,28 @@ class StockViewModel: ObservableObject {
     
     public func fetchStockData() {
         APIRequest.instance.getSymbolQuote(symbol: "AAPL") { returnedQuote in
-            let newStock = StockModel(symbol: "AAPL", currentPrice: returnedQuote?.c, percentageChange: returnedQuote?.dp)
+            // Putting an example APPL stock into the portfolio
+            let newStock = StockModel(symbol: "AAPL", currentPrice: returnedQuote?.c, percentageChange: returnedQuote?.dp, sharesOwned: 1)
             DispatchQueue.main.async {
                 self.stocks.append(newStock)
             }
         }
     }
-    public func removeStock(stock: StockModel) {
-        if let index = stocks.firstIndex(of: stock) {
-            stocks.remove(at: index)
+    public func removeStock(stock: StockModel, sharesToRemove: Int) {
+        guard let currentShares = stock.sharesOwned else {
+                print("Error: Shares owned is nil")
+                return
+            }
+        
+        if let index = stocks.firstIndex(where: { $0.symbol == stock.symbol }) {
+            // If shares to be removed would result in zero or fewer shares, remove the stock entirely
+            if currentShares - sharesToRemove <= 0 {
+                stocks.remove(at: index)
+            } else {
+                // Otherwise, update the sharesOwned
+                // Modify the stock in the array directly
+                stocks[index].sharesOwned = currentShares - sharesToRemove
+            }
         }
     }
 }

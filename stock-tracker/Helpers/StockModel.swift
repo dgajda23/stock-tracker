@@ -11,4 +11,5 @@ struct StockModel: Hashable {
     let symbol: String
     let currentPrice: Double?
     let percentageChange: Double?
+    var sharesOwned: Int?
 }

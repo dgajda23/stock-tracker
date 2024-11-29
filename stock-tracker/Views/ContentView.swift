@@ -24,6 +24,7 @@ struct ContentView: View {
             Spacer()
         }
         .padding()
+        .background(Color.charcoalBlack)
         .edgesIgnoringSafeArea(.bottom)
         .sheet(isPresented: $isShowingStockSearchSheet) {
             SearchStockView(stocksVM: stockVM)
